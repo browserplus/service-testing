@@ -81,7 +81,7 @@ module BrowserPlus
     # SDK. (http://browserplus.yahoo.com)
     def findServiceRunner
       # first, try relative to this repo 
-      srBase = File.join(File.dirname(__FILE__), "..", "..", "bpsdk", "bin")
+      srBase = File.join(File.dirname(__FILE__), "..", "..", "bin")
       candidates = [
                     File.join(srBase, "ServiceRunner.exe"),
                     File.join(srBase, "ServiceRunner"),             
