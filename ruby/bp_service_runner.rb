@@ -46,7 +46,7 @@ module BrowserPlus
         cmd = "#{sr} -slave #{path}"
       end
       @srp = IO.popen(cmd, "w+")
-      i = getmsg(@srp, 0.5)
+      i = getmsg(@srp, 2.0)
       raise i['msg'] if i && i['type'] == 'error' && i['msg']
       raise "couldn't initialize" if i['msg'] !~ /service initialized/
       @instance = nil
@@ -86,22 +86,23 @@ module BrowserPlus
     # attempt to find the ServiceRunner binary, a part of the BrowserPlus
     # SDK. (http://browserplus.yahoo.com)
     def findServiceRunner
-      # first, try relative to this repo 
-      srBase = File.join(File.dirname(__FILE__), "..", "..", "bin")
-      candidates = [
-                    File.join(srBase, "ServiceRunner.exe"),
-                    File.join(srBase, "ServiceRunner"),             
-                   ]
-      
-      # now use BPSDK_PATH env var if present
+      candidates = []
+
+      # first use SERVICERUNNER_PATH if present
+      if ENV.has_key? 'SERVICERUNNER_PATH'
+        candidates.push(ENV['SERVICERUNNER_PATH'])
+      end
+
+      # next use BPSDK_PATH env var if present
       if ENV.has_key? 'BPSDK_PATH'
         candidates.push File.join(ENV['BPSDK_PATH'], "bin", "ServiceRunner.exe")
         candidates.push File.join(ENV['BPSDK_PATH'], "bin", "ServiceRunner")
       end
       
-      if ENV.has_key? 'SERVICERUNNER_PATH'
-        candidates.push(ENV['SERVICERUNNER_PATH'])
-      end
+      # finally, try relative to this repo 
+      srBase = File.join(File.dirname(__FILE__), "..", "..", "bin")
+      candidates.push File.join(srBase, "ServiceRunner.exe")
+      candidates.push File.join(srBase, "ServiceRunner")
 
       candidates.each { |p|
         return p if File.executable? p
