@@ -149,7 +149,7 @@ module BrowserPlus
     end
 
     def method_missing func, *args, &cb
-      invoke func, args[0], cb
+      invoke func, args[0], &cb
     end
     private
     include ProcessController
