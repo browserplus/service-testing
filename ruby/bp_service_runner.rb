@@ -53,8 +53,9 @@ module BrowserPlus
     end
 
     # allocate a new instance
-    def allocate
-      @srp.syswrite "allocate\n"
+    def allocate uri = nil
+      uri = "" if uri == nil
+      @srp.syswrite "allocate #{uri}\n"
       i = getmsg(@srp, 2.0)
       raise "couldn't allocate" if !i.has_key?('msg')
       num = i['msg']
