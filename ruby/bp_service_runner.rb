@@ -19,11 +19,13 @@ module BrowserPlus
         begin
           # now peel off the first json map, taking advantage of the fact that
           # ServiceRunner inserts newlines
-          m = @outputbuffer.match(/^([^\n]+)\n(.*)$/)
-          if m != nil
+          lines = @outputbuffer.split "\n"
+          lines.shift while lines.length && lines[0].strip == ""
+          if lines != nil && lines.length
             # regex pulls off that \n, so add it back!
-            @outputbuffer = "#{m[2]}\n";
-            j = JSON.parse(m[1])
+            msg = lines.shift
+            @outputbuffer = (lines.length ? lines.join("\n") : "")
+            j = JSON.parse(msg)
             return j
           end
         rescue
