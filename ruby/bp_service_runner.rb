@@ -44,9 +44,9 @@ module BrowserPlus
       raise "can't execute ServiceRunner: #{sr}" if !File.executable? sr
       cmd = ""
       if provider != nil
-        cmd = "#{sr} -slave -providerPath '#{provider}' '#{path}'"
+        cmd = "#{sr} -slave -providerPath \"#{provider}\" \"#{path}\""
       else
-        cmd = "#{sr} -slave '#{path}'"
+        cmd = "#{sr} -slave \"#{path}\""
       end
       @srp = IO.popen(cmd, "w+")
       i = getmsg(@srp, 2.0)
