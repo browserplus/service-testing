@@ -122,11 +122,11 @@ module Test
               indentLevel += 1
               # Iterate over array.
               @successes.each_with_index { |result, i|
-                file.write("#{indent(indentLevel)}<SuccessfulTest id=\"#{result.testid}\">\n")
+                file.write("#{indent(indentLevel)}<Test id=\"#{result.testid}\">\n")
                 indentLevel += 1
                 file.write("#{indent(indentLevel)}<Name>#{result.testname}</Name>\n")
                 indentLevel -= 1
-                file.write("#{indent(indentLevel)}</SuccessfulTest>\n")
+                file.write("#{indent(indentLevel)}</Test>\n")
               }
               indentLevel -= 1
               file.write("#{indent(indentLevel)}</SuccessfulTests>\n")
