@@ -175,10 +175,7 @@ module Test
               location_value = if(fault.location.size == 1)
                 fault.location[0].sub(/\A(.+:\d+).*/, '\\1')
               else
-                # NEEDSWORK!!!
-                # Uh, need to run into this case before we can figure out how to parse the result.
-                #"\n    [#{fault.location.join("\n     ")}]"
-                raise ArgumentException
+                "\n    [#{fault.location.join("\n     ")}]"
               end
               location_array = location_value.split(':')
               i = 0
