@@ -32,7 +32,14 @@ module BrowserPlus
         rescue
         end
         break if (nil == select( [ pio ], nil, nil, timeo ))  
-        @outputbuffer += pio.sysread(1024) 
+        buf = ""
+        while true
+          buf += pio.sysread(1024) 
+          # keep reading until we get a buffer who's last char is a newline.
+          # this guarantees we're not in a partially read state
+          break if (buf[buf.length - 1] == 10)
+        end
+        @outputbuffer += buf          
       end
       nil
     end
