@@ -10,6 +10,7 @@ rescue LoadError
   require "json/json.rb"
 end
 require 'cppunit_runner.rb'
+require 'bp_assert.rb'
 
 module BrowserPlus
   module ProcessController
