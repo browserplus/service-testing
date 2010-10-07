@@ -59,7 +59,7 @@ module BrowserPlus
         end
       else
         if providerPath != nil
-          cmd = "#{sr} -slave -providerPath \"${providerPath}\" \"#{path}\""
+          cmd = "#{sr} -slave -providerPath \"#{providerPath}\" \"#{path}\""
         else
           cmd = "#{sr} -slave \"#{path}\""
         end
