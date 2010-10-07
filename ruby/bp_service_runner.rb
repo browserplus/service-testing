@@ -47,7 +47,7 @@ module BrowserPlus
   end
 
   class Service
-    def initialize path, downloadPath = nil, distroServer = nil
+    def initialize path, downloadPath = nil, distroServer = nil, providerPath = nil
       sr = findServiceRunner
       raise "can't execute ServiceRunner: #{sr}" if !File.executable? sr
       cmd = ""
@@ -58,7 +58,11 @@ module BrowserPlus
           cmd = "#{sr} -slave -downloadPath \"#{downloadPath}\" \"#{path}\""
         end
       else
-        cmd = "#{sr} -slave \"#{path}\""
+        if providerPath != nil
+          cmd = "#{sr} -slave -providerPath \"${providerPath}\" \"#{path}\""
+        else
+          cmd = "#{sr} -slave \"#{path}\""
+        end
       end
       @srp = IO.popen(cmd, "w+")
       i = getmsg(@srp, 2.0)
@@ -172,6 +176,12 @@ module BrowserPlus
 
   def BrowserPlus.run path, downloadPath = nil, distroServer = nil, &block
     s = BrowserPlus::Service.new(path, downloadPath, distroServer)
+    block.call(s)
+    s.shutdown
+  end
+
+  def BrowserPlus.runProvider path, providerPath, &block
+    s = BrowserPlus::Service.new(path, nil, nil, providerPath)
     block.call(s)
     s.shutdown
   end
