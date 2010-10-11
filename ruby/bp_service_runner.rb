@@ -47,21 +47,25 @@ module BrowserPlus
   end
 
   class Service
-    def initialize path, downloadPath = nil, distroServer = nil, providerPath = nil
+    def initialize path, downloadPath = nil, distroServer = nil, providerPath = nil, logfile = nil
       sr = findServiceRunner
       raise "can't execute ServiceRunner: #{sr}" if !File.executable? sr
       cmd = ""
+      logopts = ""
+      if logfile != nil
+        logopts = "-log debug -logfile \"#{logfile}\""
+      end
       if downloadPath != nil
         if distroServer != nil
-          cmd = "#{sr} -slave -downloadPath \"#{downloadPath}\" -distroServer \"${distroServer}\"\" #{path}\""
+          cmd = "#{sr} #{logopts} -slave -downloadPath \"#{downloadPath}\" -distroServer \"${distroServer}\"\" #{path}\""
         else
-          cmd = "#{sr} -slave -downloadPath \"#{downloadPath}\" \"#{path}\""
+          cmd = "#{sr} #{logopts} -slave -downloadPath \"#{downloadPath}\" \"#{path}\""
         end
       else
         if providerPath != nil
-          cmd = "#{sr} -slave -providerPath \"#{providerPath}\" \"#{path}\""
+          cmd = "#{sr} #{logopts} -slave -providerPath \"#{providerPath}\" \"#{path}\""
         else
-          cmd = "#{sr} -slave \"#{path}\""
+          cmd = "#{sr} #{logopts} -slave \"#{path}\""
         end
       end
       @srp = IO.popen(cmd, "w+")
@@ -174,14 +178,14 @@ module BrowserPlus
     include ProcessController
   end
 
-  def BrowserPlus.run path, downloadPath = nil, distroServer = nil, &block
-    s = BrowserPlus::Service.new(path, downloadPath, distroServer)
+  def BrowserPlus.run path, downloadPath = nil, distroServer = nil, logfile = nil, &block
+    s = BrowserPlus::Service.new(path, downloadPath, distroServer, nil, logfile)
     block.call(s)
     s.shutdown
   end
 
-  def BrowserPlus.runProvider path, providerPath, &block
-    s = BrowserPlus::Service.new(path, nil, nil, providerPath)
+  def BrowserPlus.runProvider path, providerPath, logfile = nil, &block
+    s = BrowserPlus::Service.new(path, nil, nil, providerPath, logfile)
     block.call(s)
     s.shutdown
   end
