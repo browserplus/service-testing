@@ -69,10 +69,14 @@ module BrowserPlus
         end
       end
       @srp = IO.popen(cmd, "w+")
-      i = getmsg(@srp, 2.0)
-      raise i['msg'] if i && i['type'] == 'error' && i['msg']
-      raise "couldn't initialize" if i['msg'] !~ /service initialized/
-      @instance = nil
+      msgok = true
+      while true
+        i = getmsg(@srp, 2.0)
+        raise i['msg'] if i && i['type'] == 'error' && i['msg']
+        raise "couldn't initialize" if (i['msg'] !~ /service initialized/ && i['msg'] !~ /Downloading service/ && i['msg'] != "." && i['msg'] !~ /Installing service/)
+        @instance = nil
+        break if i['msg'] =~ /service initialized/
+      end
     end
 
     # allocate a new instance
