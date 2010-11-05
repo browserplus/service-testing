@@ -70,12 +70,16 @@ module BrowserPlus
       end
       @srp = IO.popen(cmd, "w+")
       msgok = true
+      x = 0
       while true
         i = getmsg(@srp, 2.0)
         raise i['msg'] if i && i['type'] == 'error' && i['msg']
-        raise "couldn't initialize" if (i['msg'] !~ /service initialized/ && i['msg'] !~ /Downloading service/ && i['msg'] != "." && i['msg'] !~ /Installing service/)
+        raise "couldn't initialize" if i && (i['msg'] !~ /service initialized/ && i['msg'] !~ /Downloading service/ && i['msg'] != "." && i['msg'] !~ /Installing service/)
         @instance = nil
         break if i['msg'] =~ /service initialized/
+        # This is a catch-all timeout.  Might need some adjustment for real-world.
+        x = x + 1
+        raise "couldn't initialize" if x > 60
       end
     end
 
