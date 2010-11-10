@@ -79,7 +79,7 @@ module BrowserPlus
         break if i['msg'] =~ /service initialized/
         # This is a catch-all timeout.  Might need some adjustment for real-world.
         x = x + 1
-        raise "couldn't initialize" if x > 60
+        raise "couldn't initialize" if x > 240
       end
     end
 
