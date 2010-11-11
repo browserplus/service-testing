@@ -76,7 +76,7 @@ module BrowserPlus
         raise i['msg'] if i && i['type'] == 'error' && i['msg']
         raise "couldn't initialize" if i && (i['msg'] !~ /service initialized/ && i['msg'] !~ /Downloading service/ && i['msg'] != "." && i['msg'] !~ /Installing service/)
         @instance = nil
-        break if i['msg'] =~ /service initialized/
+        break if i && i['msg'] =~ /service initialized/
         # This is a catch-all timeout.  Might need some adjustment for real-world.
         x = x + 1
         raise "couldn't initialize" if x > 240
