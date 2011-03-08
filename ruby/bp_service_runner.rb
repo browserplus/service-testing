@@ -47,7 +47,8 @@ module BrowserPlus
   end
 
   class Service
-    def initialize path, downloadPath = nil, distroServer = nil, providerPath = nil, logfile = nil
+    def initialize path, downloadPath = nil, distroServer = nil, providerPath = nil, logfile = nil, allocateUri = nil
+      @allocateUri = allocateUri
       sr = findServiceRunner
       raise "can't execute ServiceRunner: #{sr}" if !File.executable? sr
       cmd = ""
@@ -84,7 +85,8 @@ module BrowserPlus
     end
 
     # allocate a new instance
-    def allocate uri = nil
+    def allocate
+      uri = @allocateUri
       uri = "" if uri == nil
       @srp.syswrite "allocate #{uri}\n"
       i = getmsg(@srp, 2.0)
@@ -95,7 +97,7 @@ module BrowserPlus
 
     # invoke a function on an automatically allocated instance of the service
     def invoke f, a, &cb
-      @instance = allocate if @instance == nil
+      @instance = allocate() if @instance == nil
       @instance.invoke f, a, &cb
     end
 
@@ -186,14 +188,14 @@ module BrowserPlus
     include ProcessController
   end
 
-  def BrowserPlus.run path, downloadPath = nil, distroServer = nil, logfile = nil, &block
-    s = BrowserPlus::Service.new(path, downloadPath, distroServer, nil, logfile)
+  def BrowserPlus.run path, downloadPath = nil, distroServer = nil, logfile = nil, allocateUri = nil, &block
+    s = BrowserPlus::Service.new(path, downloadPath, distroServer, nil, logfile, allocateUri)
     block.call(s)
     s.shutdown
   end
 
-  def BrowserPlus.runProvider path, providerPath, logfile = nil, &block
-    s = BrowserPlus::Service.new(path, nil, nil, providerPath, logfile)
+  def BrowserPlus.runProvider path, providerPath, logfile = nil, allocateUri = nil, &block
+    s = BrowserPlus::Service.new(path, nil, nil, providerPath, logfile, allocateUri)
     block.call(s)
     s.shutdown
   end
