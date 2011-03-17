@@ -12,10 +12,7 @@ end
 begin
   require 'ruby18_cppunit_runner.rb'
 rescue NameError
-  # NEEDSWORK!!
-  # 1. Implement the Ruby 1.9 MiniTest equivalent
-  # to handle tracking run results and emit cppunit xml
-  # 2. we also need to handle input args "--runner=cppunit"
+  require 'ruby19_cppunit_runner.rb'
 end
 require 'bp_assert.rb'
 
@@ -45,7 +42,7 @@ module BrowserPlus
           buf += pio.sysread(1024) 
           # keep reading until we get a buffer who's last char is a newline.
           # this guarantees we're not in a partially read state
-          break if (buf[buf.length - 1] == 10)
+          break if (buf[buf.length - 1].to_i == 10) || (buf[buf.length - 1].to_i == 0)
         end
         @outputbuffer += buf          
       end
