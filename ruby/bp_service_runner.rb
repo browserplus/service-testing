@@ -9,7 +9,14 @@ begin
 rescue LoadError
   require "json/json.rb"
 end
-require 'cppunit_runner.rb'
+begin
+  require 'ruby18_cppunit_runner.rb'
+rescue NameError
+  # NEEDSWORK!!
+  # 1. Implement the Ruby 1.9 MiniTest equivalent
+  # to handle tracking run results and emit cppunit xml
+  # 2. we also need to handle input args "--runner=cppunit"
+end
 require 'bp_assert.rb'
 
 module BrowserPlus

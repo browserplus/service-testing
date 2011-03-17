@@ -1,6 +1,5 @@
 # Usage:
-#   1. add require 'cppunit_runner.rb' to your test_script
-#   2. ruby [test_script] --runner=cppunit
+#   1. ruby [test_script] --runner=cppunit
 ## In ruby 1.9, we must use the test-unit v 1.2.3 gem
 ## In ruby 1.8, the same code is distributed as part of stdlib
 #begin
