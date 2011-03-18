@@ -159,6 +159,7 @@ module BrowserPlus
     end
 
     def invoke func, args, &cb
+      args = Hash.new if args == nil
       args = JSON.generate(args).gsub("'", "\\'")
       cmd = "inv #{func.to_s}"
       cmd += " '#{args}'" if args != "null"
