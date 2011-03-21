@@ -42,7 +42,7 @@ module BrowserPlus
           buf += pio.sysread(1024) 
           # keep reading until we get a buffer who's last char is a newline.
           # this guarantees we're not in a partially read state
-          break if (buf[buf.length - 1].to_i == 10) || (buf[buf.length - 1].to_i == 0)
+          break if buf[buf.length - 1].ord == 10
         end
         @outputbuffer += buf          
       end
@@ -55,7 +55,6 @@ module BrowserPlus
       @allocateUri = allocateUri
       sr = findServiceRunner
       raise "can't execute ServiceRunner: #{sr}" if !File.executable? sr
-      cmd = ""
       debugopts = ""
       if debugService == true
         debugopts = "-debugService"
@@ -64,6 +63,7 @@ module BrowserPlus
       if logfile != nil
         logopts = "-log debug -logfile \"#{logfile}\""
       end
+      cmd = ""
       if downloadPath != nil
         if distroServer != nil
           cmd = "#{sr} #{debugopts} #{logopts} -slave -downloadPath \"#{downloadPath}\" -distroServer \"${distroServer}\"\" #{path}\""
@@ -177,6 +177,7 @@ module BrowserPlus
         # invoke passed in block for callbacks?
         if i['type'] == "callback"        
           cb.call(i['msg']) if cb != nil
+          i = nil
           next
         end
         break
