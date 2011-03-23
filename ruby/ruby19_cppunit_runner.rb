@@ -200,7 +200,7 @@ module MiniTest
       # Go through Failed Tests.
       #############
       indentLevel += 1
-      if @failure_results.length == 0
+      if @failure_results == nil || @failure_results.length == 0
         file.write("#{indent(indentLevel)}<FailedTests></FailedTests>\n")
       else
         file.write("#{indent(indentLevel)}<FailedTests>\n")
@@ -229,7 +229,7 @@ module MiniTest
       # Go through Succeeded Tests.
       #############
       indentLevel += 1
-      if @success_results.length == 0
+      if @success_results == nil || @success_results.length == 0
         file.write("#{indent(indentLevel)}<SuccessfulTests></SuccessfulTests>\n")
       else
         file.write("#{indent(indentLevel)}<SuccessfulTests>\n")
