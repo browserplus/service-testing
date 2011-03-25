@@ -11,6 +11,8 @@ rescue LoadError
 end
 begin
   require 'ruby18_cppunit_runner.rb'
+rescue LoadError
+  require 'ruby19_cppunit_runner.rb'
 rescue NameError
   require 'ruby19_cppunit_runner.rb'
 end
