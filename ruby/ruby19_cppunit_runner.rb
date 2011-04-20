@@ -199,7 +199,7 @@ module MiniTest
       # Go through Failed Tests.
       #############
       failedtests = testrun.add_element("FailedTests")
-      if @failures_results != nil && @failure_results.length > 0
+      if @failure_results != nil && @failure_results.length > 0
         # Iterate over array.
         @failure_results.each { |result|
           failedtest = failedtests.add_element("FailedTest")
