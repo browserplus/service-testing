@@ -226,7 +226,7 @@ module MiniTest
         @success_results.each { |result|
           test = successfultests.add_element("Test")
           test.add_attributes({"id" => result.test_id})
-          name = successfultests.add_element("Name")
+          name = test.add_element("Name")
           name.add_text(result.test_name)
         }
       end

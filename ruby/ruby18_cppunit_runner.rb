@@ -118,7 +118,7 @@ module Test
               @successes.each_with_index { |result, i|
                 test = successfultests.add_element("Test")
                 test.add_attributes({"id" => result.testid})
-                name = successfultests.add_element("Name")
+                name = test.add_element("Name")
                 name.add_text(result.testname)
               }
             end
