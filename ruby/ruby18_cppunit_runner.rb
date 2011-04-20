@@ -9,6 +9,7 @@
 #end
 require 'test/unit'
 require 'test/unit/ui/console/testrunner'
+require 'rexml/document'
 
 module Test
   module Unit
@@ -84,77 +85,63 @@ module Test
           end
 
           def emit_xml(filename)
-            file = File.new(filename, "w")
-            indentLevel = 0
-            file.write("#{indent(indentLevel)}<?xml version=\"1.0\" encoding='ISO-8859-1' standalone='yes' ?>\n")
-            file.write("#{indent(indentLevel)}<TestRun>\n")
+            xmldoc = REXML::Document.new("<?xml version=\"1.0\" encoding='ISO-8859-1' standalone='yes' ?>")
+            testrun = xmldoc.add_element("TestRun")
             #############
             # Go through Failed Tests.
             #############
-            indentLevel += 1
-            if @failures.length == 0
-              file.write("#{indent(indentLevel)}<FailedTests></FailedTests>\n")
-            else
-              file.write("#{indent(indentLevel)}<FailedTests>\n")
-              indentLevel += 1
+            failedtests = testrun.add_element("FailedTests")
+            if @failures != nil && @failures.length > 0
               # Iterate over array.
               @failures.each_with_index { |result, i|
-                file.write("#{indent(indentLevel)}<FailedTest id=\"#{result.testid}\">\n")
-                indentLevel += 1
-                file.write("#{indent(indentLevel)}<Name>#{result.testname}</Name>\n")
-                file.write("#{indent(indentLevel)}<FailureType>#{result.failuretype}</FailureType>\n")
-                file.write("#{indent(indentLevel)}<Location>\n")
-                indentLevel += 1
-                file.write("#{indent(indentLevel)}<File>#{result.file}</File>\n")
-                file.write("#{indent(indentLevel)}<Line>#{result.line}</Line>\n")
-                indentLevel -= 1
-                file.write("#{indent(indentLevel)}</Location>\n")
-                file.write("#{indent(indentLevel)}<Message>#{result.message}</Message>\n")
-                indentLevel -= 1
-                file.write("#{indent(indentLevel)}</FailedTest>\n")
+                failedtest = failedtests.add_element("FailedTest")
+                failedtest.add_attributes({"id" => result.testid})
+                name = failedtest.add_element("Name")
+                name.add_text(result.testname)
+                failuretype = failedtest.add_element("FailureType")
+                failuretype.add_text(result.failuretype)
+                location = failedtest.add_element("Location")
+                file = location.add_element("File")
+                file.add_text(result.file)
+                line = location.add_element("Line")
+                line.add_text(result.line)
+                message = failedtest.add_element("Message")
+                message.add_text(result.message)
               }
-              indentLevel -= 1
-              file.write("#{indent(indentLevel)}</FailedTests>\n")
             end
-            indentLevel -= 1
             #############
             # Go through Succeeded Tests.
             #############
-            indentLevel += 1
-            if @successes.length == 0
-              file.write("#{indent(indentLevel)}<SuccessfulTests></SuccessfulTests>\n")
-            else
-              file.write("#{indent(indentLevel)}<SuccessfulTests>\n")
-              indentLevel += 1
+            successfultests = testrun.add_element("SuccessfulTests")
+            if @successes != nil && @successes.length > 0
               # Iterate over array.
               @successes.each_with_index { |result, i|
-                file.write("#{indent(indentLevel)}<Test id=\"#{result.testid}\">\n")
-                indentLevel += 1
-                file.write("#{indent(indentLevel)}<Name>#{result.testname}</Name>\n")
-                indentLevel -= 1
-                file.write("#{indent(indentLevel)}</Test>\n")
+                test = successfultests.add_element("Test")
+                test.add_attributes({"id" => result.testid})
+                name = successfultests.add_element("Name")
+                name.add_text(result.testname)
               }
-              indentLevel -= 1
-              file.write("#{indent(indentLevel)}</SuccessfulTests>\n")
             end
-            indentLevel -= 1
             #############
             # Go through Statistics.
             #############
-            indentLevel += 1
-            file.write("#{indent(indentLevel)}<Statistics>\n")
-            indentLevel += 1
-            file.write("#{indent(indentLevel)}<Tests>#{@errors.length + @failures.length + @successes.length}</Tests>\n")
-            file.write("#{indent(indentLevel)}<FailuresTotal>#{@errors.length + @failures.length}</FailuresTotal>\n")
-            file.write("#{indent(indentLevel)}<Errors>#{@errors.length}</Errors>\n")
-            file.write("#{indent(indentLevel)}<Failures>#{@failures.length}</Failures>\n")
-            indentLevel -= 1
-            file.write("#{indent(indentLevel)}</Statistics>\n")
-            indentLevel -= 1
+            statistics = testrun.add_element("Statistics")
+            tests = statistics.add_element("Tests")
+            tests.add_text((@errors.length + @failures.length + @successes.length).to_s)
+            failurestotal = statistics.add_element("FailuresTotal")
+            failurestotal.add_text((@errors.length + @failures.length).to_s)
+            errors = statistics.add_element("Errors")
+            errors.add_text(@errors.length.to_s)
+            failures = statistics.add_element("Failures")
+            failures.add_text(@failures.length.to_s)
             #############
             # Done.
             #############
-            file.write("#{indent(indentLevel)}</TestRun>\n")
+            formatter = REXML::Formatters::Pretty.new()
+            out = String.new()
+            formatter.write(xmldoc, out)
+            file = File.new(filename, "w")
+            file.write(out)
           end
         end
 
