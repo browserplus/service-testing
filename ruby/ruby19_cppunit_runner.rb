@@ -239,7 +239,6 @@ module MiniTest
           file.write("#{indent(indentLevel)}<Test id=\"#{result.test_id}\">\n")
           indentLevel += 1
           file.write("#{indent(indentLevel)}<Name>#{result.test_name}</Name>\n")
-          file.write("#{indent(indentLevel)}<Name></Name>\n")
           indentLevel -= 1
           file.write("#{indent(indentLevel)}</Test>\n")
         }
